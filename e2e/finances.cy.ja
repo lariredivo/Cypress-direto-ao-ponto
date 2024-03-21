@@ -1,0 +1,58 @@
+
+describe('Transações', () => {
+
+    // hooks --> executar antes ou depois de cada ou de todos os testes
+    // before
+    // after
+    // beforeEach
+    // afterEach
+
+    beforeEach(() => {
+        cy.visit("https://devfinance-agilizei.netlify.app/") 
+    });
+
+    it('Cadastrar uma entrada', () => {
+
+        criarTransacao("Freela", 250)
+
+       cy.get('tbody tr td.description').should("have.text", "Freela")
+    });
+
+    it('Cadastrar uma saída', () => {
+
+        criarTransacao("Cinema", - 40.50)
+
+        cy.get('tbody tr td.description').should("have.text", "Cinema")
+    });
+
+    it('Excluir transação', () => {
+
+        criarTransacao("Pagamento", 1900.50)
+        criarTransacao("Freela", 291)
+    
+        // opção navegando a partir da descrição e encontrando o elemento (img)
+        cy.contains(".description", "Pagamento")
+            .parent()
+            .find('img')
+            .click()
+
+            //alterantiva usando sibling e children (img)
+        cy.contains(".description", "Freela")
+            .siblings()
+            .children("img")
+            .click()
+});
+    });
+
+       
+
+    
+
+function criarTransacao(descricao, valor) {
+    cy.contains("Nova Transação").click()
+    cy.get('#description').type(descricao)
+    cy.get('#amount').type(valor)
+    cy.get('#date').type("2023-02-15") // yyyy-mm-dd
+
+    cy.get('button').click() // outra forma de escrever cy.contains('button', 'Salvar').click()
+}
